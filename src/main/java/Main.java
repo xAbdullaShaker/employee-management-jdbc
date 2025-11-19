@@ -1,5 +1,3 @@
-// Class purpose: Console UI (menu) to call the Service and perform CRUD operations.
-
 import model.Employee;
 import service.EmployeeService;
 
@@ -18,12 +16,23 @@ public class Main {
             int c = readInt("Choose: ");
             try {
                 switch (c) {
-                    case 1 -> add();
-                    case 2 -> list();
-                    case 3 -> update();
-                    case 4 -> deleteEmp();
-                    case 5 -> { System.out.println("Bye!"); return; }
-                    default -> System.out.println("Invalid choice.");
+                    case 1:
+                        add();
+                        break;
+                    case 2:
+                        list();
+                        break;
+                    case 3:
+                        update();
+                        break;
+                    case 4:
+                        deleteEmp();
+                        break;
+                    case 5:
+                        System.out.println("Bye!");
+                        return;
+                    default:
+                        System.out.println("Invalid choice.");
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println("[Validation] " + e.getMessage());
@@ -36,37 +45,48 @@ public class Main {
     }
 
     private static void showMenu() {
-        System.out.println("""
-                ---------------------------
-                1) Add Employee
-                2) View All
-                3) Update Employee
-                4) Delete Employee
-                5) Exit
-                """);
+        System.out.println(
+                "---------------------------\n" +
+                "1) Add Employee\n" +
+                "2) View All\n" +
+                "3) Update Employee\n" +
+                "4) Delete Employee\n" +
+                "5) Exit\n"
+        );
     }
 
     private static void add() throws SQLException {
         String name = readLine("Name: ");
         String email = readLine("Email: ");
-        double salary = readDouble("Salary: ");
-        Employee e = service.addEmployee(name, email, salary);
-        System.out.println("Created: " + e);
+        double salary = readDouble("Base Salary: ");
+        int age = readInt("Age: ");
+        double workedHours = readDouble("Worked hours this week: ");
+
+        Employee e = service.addEmployee(name, email, salary, age, workedHours);
+        System.out.println("Created (with final salary): " + e);
     }
 
     private static void list() throws SQLException {
         List<Employee> all = service.listEmployees();
-        if (all.isEmpty()) { System.out.println("No employees."); return; }
-        all.forEach(System.out::println);
+        if (all.isEmpty()) {
+            System.out.println("No employees.");
+            return;
+        }
+        for (Employee e : all) {
+            System.out.println(e);
+        }
     }
 
     private static void update() throws SQLException {
         int id = readInt("ID to update: ");
         String name = readLine("New name: ");
         String email = readLine("New email: ");
-        double salary = readDouble("New salary: ");
-        Employee e = service.updateEmployee(id, name, email, salary);
-        System.out.println("Updated: " + e);
+        double salary = readDouble("New base salary: ");
+        int age = readInt("New age: ");
+        double workedHours = readDouble("Worked hours this week: ");
+
+        Employee e = service.updateEmployee(id, name, email, salary, age, workedHours);
+        System.out.println("Updated (with final salary): " + e);
     }
 
     private static void deleteEmp() throws SQLException {
@@ -86,6 +106,7 @@ public class Main {
             }
         }
     }
+
     private static double readDouble(String label) {
         while (true) {
             try {
@@ -96,6 +117,7 @@ public class Main {
             }
         }
     }
+
     private static String readLine(String label) {
         System.out.print(label);
         return sc.nextLine().trim();
